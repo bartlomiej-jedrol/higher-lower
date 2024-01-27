@@ -1,3 +1,4 @@
+"""Module contains code for the Higher Lower game."""
 import os
 import random
 from game_data import data
@@ -8,7 +9,8 @@ def get_random_profile():
     return random.choice(data)
 
 def format_data(profile):
-    """Returns the Instagram profile data for a comparison in a readable format: name, description, and country."""
+    """Returns the Instagram profile data for a comparison 
+    in a readable format: name, description, and country."""
     name = profile.get("name", "")
     description = profile.get("description", "")
     country = profile.get("country", "")
@@ -16,16 +18,14 @@ def format_data(profile):
     return f"{name}, a {description}, from {country}."
 
 def check_answer(profile_a, profile_b, guess):
-    """Compares follower count for given Instagram profiles. Returns the result of guessing."""
+    """Compares follower count for given Instagram profiles. 
+    Returns the result of guessing."""
     if profile_a.get("follower_count", 0) > profile_b.get("follower_count", 0):
         answer = "a"
     else:
         answer = "b"
 
-    if answer == guess:
-        return True
-    else:
-        return False
+    return answer == guess
 
 def play_game():
     """Plays a game."""
@@ -37,7 +37,9 @@ def play_game():
 
     while game_should_continue:
         profile_a = profile_b
-        profile_b = get_random_profile() # For a subsequent attempts the user should continue with one of the profiles from a previous attempt.
+        # For a subsequent attempts the user continue
+        # with one of the profiles from a previous attempt.
+        profile_b = get_random_profile()
 
         # Exclude the comparison between the same profiles.
         while profile_a == profile_b:
@@ -48,8 +50,9 @@ def play_game():
         print(f"Compare B: {format_data(profile_b)}")
 
         guess = input("Who has more followers? Type 'A' or 'B': ").lower()
-        game_should_continue = check_answer(profile_a, profile_b, guess) # The game should continue if the user is correct.
-
+        # The game should continue if the user is correct.
+        game_should_continue = check_answer(profile_a, profile_b, guess)
+              
         # Clear the console before printing the result.
         os.system("clear")
         print(logo)
