@@ -1,17 +1,23 @@
-import art
 import os
 import random
 from game_data import data
+from art import logo, vs
 
-def print_comparison(profile_A, profile_B):
-    """Prints data of Instagram profiles for a comparison."""
-    print("Compare A: " + profile_A.get("name", "") + ", a " + profile_A.get("description", "") + ", from " + profile_A.get("country") + ".")
-    print(art.vs)
-    print("Against B: " + profile_B.get("name", "") + ", a " + profile_B.get("description", "") + ", from " + profile_B.get("country") + "." + "\n")
+def get_random_profile():
+    """Returns a random profile from a data set."""
+    return random.choice(data)
 
-def check_if_guess(profile_A, profile_B, guess):
-    """Compares follower count for given Instagram profiles. Returns if the user has guessed or not."""
-    if profile_A.get("follower_count", 0) > profile_B.get("follower_count", 0):
+def format_data(profile):
+    """Returns the Instagram profile data for a comparison in a readable format: name, description, and country."""
+    name = profile.get("name", "")
+    description = profile.get("description", "")
+    country = profile.get("country", "")
+
+    return f"{name}, a {description}, from {country}."
+
+def check_answer(profile_a, profile_b, guess):
+    """Compares follower count for given Instagram profiles. Returns the result of guessing."""
+    if profile_a.get("follower_count", 0) > profile_b.get("follower_count", 0):
         answer = "a"
     else:
         answer = "b"
@@ -23,25 +29,32 @@ def check_if_guess(profile_A, profile_B, guess):
 
 def play_game():
     """Plays a game."""
-    print(art.logo)
-    
-    is_guess = True # Assign an initial value to enter the while loop.
+    print(logo)
+    game_should_continue = True
     score = 0
-    while is_guess:
-        # Choose two random profiles from the data set.
-        profile_A = random.choice(data)
-        profile_B = random.choice(data)
+    profile_a = get_random_profile()
+    profile_b = get_random_profile()
 
-        print_comparison(profile_A, profile_B)
+    while game_should_continue:
+        profile_a = profile_b
+        profile_b = get_random_profile() # For a subsequent attempts the user should continue with one of the profiles from a previous attempt.
+
+        # Exclude the comparison between the same profiles.
+        while profile_a == profile_b:
+            profile_b = get_random_profile()
+
+        print(f"Compare A: {format_data(profile_a)}")
+        print(vs)
+        print(f"Compare B: {format_data(profile_b)}")
 
         guess = input("Who has more followers? Type 'A' or 'B': ").lower()
-        is_guess = check_if_guess(profile_A, profile_B, guess)
+        game_should_continue = check_answer(profile_a, profile_b, guess) # The game should continue if the user is correct.
 
         # Clear the console before printing the result.
         os.system("clear")
-        print(art.logo)
+        print(logo)
 
-        if is_guess:
+        if game_should_continue:
             score += 1
             print(f"You're right! Current score: {score}.\n")
         else:
